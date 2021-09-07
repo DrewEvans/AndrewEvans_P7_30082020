@@ -17,23 +17,27 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate });
   }
   handleChangeFile = (e) => {
-    e.preventDefault();
     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
-    const regex = "([^\\s]+(\\.(?i)(jpe?g|png|gif|bmp))$)";
-    /**
-     *TODO: Test if file submitted is in the correct format
-     */
-    this.firestore.storage
-      .ref(`justificatifs/${fileName}`)
-      .put(file)
-      .then((snapshot) => snapshot.ref.getDownloadURL())
-      .then((url) => {
-        this.fileUrl = url;
-        this.fileName = fileName;
-      });
+    const regex = new RegExp(/^(.*)(\.png|\.jpg|\.jpeg)$/, "i");
+
+    regex.test(fileName)
+      ? this.firestore.storage
+          .ref(`justificatifs/${fileName}`)
+          .put(file)
+          .then((snapshot) => snapshot.ref.getDownloadURL())
+          .then((url) => {
+            this.fileUrl = url;
+            this.fileName = fileName;
+          })
+      : /**
+         * todo: add validation rule so only valid file extensions
+         * todo: convert pdf to one of matching
+         */
+        e.preventDefault();
+    null;
   };
   handleSubmit = (e) => {
     e.preventDefault();
