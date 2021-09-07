@@ -23,21 +23,23 @@ export default class NewBill {
     const fileName = filePath[filePath.length - 1];
     const regex = new RegExp(/^(.*)(\.png|\.jpg|\.jpeg)$/, "i");
 
-    regex.test(fileName)
-      ? this.firestore.storage
-          .ref(`justificatifs/${fileName}`)
-          .put(file)
-          .then((snapshot) => snapshot.ref.getDownloadURL())
-          .then((url) => {
-            this.fileUrl = url;
-            this.fileName = fileName;
-          })
-      : /**
-         * todo: add validation rule so only valid file extensions
-         * todo: convert pdf to one of matching
-         */
-        e.preventDefault();
-    null;
+    if (regex.test(fileName)) {
+      e.target.classList.remove("red-border");
+      e.target.classList.add("blue-border");
+
+      this.firestore.storage
+        .ref(`justificatifs/${fileName}`)
+        .put(file)
+        .then((snapshot) => snapshot.ref.getDownloadURL())
+        .then((url) => {
+          this.fileUrl = url;
+          this.fileName = fileName;
+        });
+    } else {
+      e.preventDefault();
+      e.target.classList.remove("blue-border");
+      e.target.classList.add("red-border");
+    }
   };
   handleSubmit = (e) => {
     e.preventDefault();
