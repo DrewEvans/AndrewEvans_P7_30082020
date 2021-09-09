@@ -66,8 +66,8 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
-    // this.createBill(bill);
-    // this.onNavigate(ROUTES_PATH["Bills"]);
+    this.createBill(bill);
+    this.onNavigate(ROUTES_PATH["Bills"]);
   };
 
   // not need to cover this function by tests
