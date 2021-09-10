@@ -143,21 +143,19 @@ export default class {
   };
 
   handleShowTickets(e, bills, index) {
-    console.log(e);
-    if (this.counter === undefined || this.index !== index) this.counter = 0;
+    const dropdown = e.target;
+
     if (this.index === undefined || this.index !== index) this.index = index;
-    console.log(`handleShow: ${this.counter % 2}`);
-    console.log(`handleShow: ${this.counter % 2 === 0}`);
-    if (this.counter % 2 === 0) {
+    if (dropdown.classList.contains("opened")) {
+      dropdown.classList.remove("opened");
+      $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
+      $(`#status-bills-container${this.index}`).html("");
+    } else {
+      dropdown.classList.add("opened");
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
       $(`#status-bills-container${this.index}`).html(
         cards(filteredBills(bills, getStatus(this.index)))
       );
-      this.counter++;
-    } else {
-      $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
-      $(`#status-bills-container${this.index}`).html("");
-      this.counter++;
     }
 
     bills.forEach((bill) => {
