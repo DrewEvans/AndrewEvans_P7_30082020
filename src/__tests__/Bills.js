@@ -88,27 +88,13 @@ describe("Given I am connected as an employee", () => {
         localStorage: window.localStorage,
       });
 
-      const handleClickIconEye = jest.fn((e) => bill.handleClickIconEye(e));
-
       const eye = screen.getAllByTestId("icon-eye")[0];
-      /**
-       * todo: Fix test when user clicks eye icon - handleClickIconEye should be called
-       *! ERR: $(...).modal is not a functionJest
-       *! JQUERY Throwing ERR ???
-       */
-      // eye.addEventListener("click", handleClickIconEye);
-      // userEvent.click(eye);
-      // expect(handleClickIconEye).toHaveBeenCalled();
+      const modal = document.querySelector(".modal");
+      const displayModal = ($.fn.modal = jest.fn());
 
-      beforeEach(() => {
-        jQuery.fn.modal = () => {};
-      });
-      // describe(() => {
-      //   //display file type
-      // });
-      afterEach(() => {
-        delete jQuery.fn.modal;
-      });
+      userEvent.click(eye);
+      expect(displayModal).toBeCalled();
+      expect(modal).toBeTruthy();
     });
   });
 });
