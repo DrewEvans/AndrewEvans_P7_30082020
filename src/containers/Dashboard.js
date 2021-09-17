@@ -158,7 +158,7 @@ export default class {
 
     return bills;
   }
-
+  /* istanbul ignore next */
   // not need to cover this function by tests
   getBillsAllUsers = () => {
     if (this.firestore) {
@@ -177,8 +177,8 @@ export default class {
         .catch(console.log);
     }
   };
-
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.firestore) {
       return this.firestore
