@@ -19,8 +19,8 @@ describe("Given I am connected as an employee", () => {
       expect(form).toBeTruthy();
     });
 
-    describe("and a file is uploaded", () => {
-      test("The file should be registered", () => {
+    describe("and a user uploads a file", () => {
+      test("The file should is uploaded", () => {
         const onNavigate = (pathname) => {
           document.body.innertHTML = ROUTES(pathname);
         };
@@ -46,56 +46,96 @@ describe("Given I am connected as an employee", () => {
         expect(handleChange).toBeCalled();
         expect(file).toBeTruthy();
       });
+      describe("The user uploads an incorrect file type", () => {
+        test("file wasnt uploaded", () => {
+          const onNavigate = (pathname) => {
+            document.body.innertHTML = ROUTES(pathname);
+          };
+          Object.defineProperty(window, "localStorage", {
+            value: localStorageMock,
+          });
+          window.localStorage.setItem(
+            "user",
+            JSON.stringify({
+              type: "Employee",
+            })
+          );
+          const newBill = new NewBill({
+            document,
+            onNavigate,
+            firestore: null,
+            localStorage: window.localStorage,
+          });
+
+          const html = NewBillUI({});
+          document.body.innerHTML = html;
+
+          const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+          const submitBtn = screen.getByTestId("form-new-bill");
+
+          newBill.fileName = "test.pdf";
+
+          submitBtn.addEventListener("click", handleSubmit);
+
+          userEvent.click(submitBtn);
+          expect(handleSubmit).toHaveBeenCalled();
+        });
+      });
     });
 
     describe("When I submit the form", () => {
-      // test("An object should be created", () => {
-      //   const onNavigate = (pathname) => {
-      //     document.body.innertHTML = ROUTES(pathname);
-      //   };
+      test("new bill has been submitted", () => {
+        const html = NewBillUI();
+        document.body.innerHTML = html;
+        const onNavigate = (pathname) => {
+          document.body.innertHTML = ROUTES(pathname);
+        };
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
+        window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+          })
+        );
 
-      //   document.body.innerHTML = NewBillUI();
+        const testbill = {
+          type: (screen.getByTestId("expense-type").value = "transports"),
+          name: (screen.getByTestId("expense-name").value = "test"),
+          amount: (screen.getByTestId("amount").value = 100),
+          date: (screen.getByTestId("datepicker").value = "2021-01-01"),
+          vat: (screen.getByTestId("vat").value = 20),
+          pct: (screen.getByTestId("pct").value = 1),
+          commentary: (screen.getByTestId("commentary").value = "text"),
+        };
+        const validBill = {
+          type: "transports",
+          name: "test",
+          amount: 100,
+          date: "2021-01-01",
+          vat: 20,
+          pct: 1,
+          commentary: "text",
+        };
 
-      //   const newBill = new NewBill({
-      //     document,
-      //     onNavigate,
-      //     firestore: null,
-      //     localStorage: window.localStorage,
-      //   });
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          firestore: null,
+          localStorage: window.localStorage,
+        });
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
-      //   const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-      //   const submitBtn = screen.getByTestId("form-new-bill");
+        const submitBtn = screen.getByTestId("form-new-bill");
 
-      //   const expectedBill = {
-      //     type: "Transports",
-      //     name: "bill",
-      //     amount: 1,
-      //     date: "2021-01-01",
-      //     vat: 20,
-      //     pct: 10,
-      //     commentary: "",
-      //     fileName: "bill.jpg",
-      //     fileURL: "https://test/test.jpg",
-      //   };
+        submitBtn.addEventListener("click", handleSubmit);
 
-      //   newBill.createBill = (newBill) => newBill;
-
-      //   screen.getByTestId("expense-type") = expectedBill.type;
-      //   screen.getByTestId("expense-name") = expectedBill.name;
-      //   screen.getByTestId("amount") = expectedBill.amount;
-      //   screen.getByTestId("datepicker") = expectedBill.date;
-      //   screen.getByTestId("vat") = expectedBill.vat;
-      //   screen.getByTestId("pct") = expectedBill.pct;
-      //   screen.getByTestId("commentary") = expectedBill.commentary;
-
-      //   newBill.fileURL = expectedBill.fileURL
-      //   newBill.fileName = expectedBill.fileName
-
-      //   submitBtn.addEventListener("click", handleSubmit);
-      //   fireEvent.click(submit),
-      //   userEvent.click(submitBtn);
-      //   expect(handleSubmit).toHaveBeenCalled();
-      // });
+        userEvent.click(submitBtn);
+        expect(testbill).toMatchObject(validBill);
+        expect(handleSubmit).toHaveBeenCalled();
+      });
 
       test("I should be redirected to the bills Page", () => {
         const onNavigate = (pathname) => {
@@ -121,7 +161,6 @@ describe("Given I am connected as an employee", () => {
         document.body.innerHTML = html;
 
         const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-
         const submitBtn = screen.getByTestId("form-new-bill");
 
         submitBtn.addEventListener("click", handleSubmit);
