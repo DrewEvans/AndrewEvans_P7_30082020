@@ -179,7 +179,9 @@ describe("Given I am connected as an employee", () => {
 		});
 	});
 });
-
+/**
+ * todo: add POST test intergration
+ */
 describe("Given When I am connected as an employee", () => {
 	describe("when I navigate to create a new bill", () => {
 		test("should ", async () => {
@@ -187,24 +189,6 @@ describe("Given When I am connected as an employee", () => {
 			const bills = await firebase.get();
 			expect(getSpy).toHaveBeenCalledTimes(1);
 			expect(bills.data.length).toBe(4);
-		});
-		test("should fetch bills from an api and fail with 404 err msg", async () => {
-			firebase.get.mockImplementationOnce(() =>
-				Promise.reject(new Error("Erreur 404"))
-			);
-			const html = NewBillUI({ error: "Erreur 404" });
-			document.body.innerHTML = html;
-			const message = await screen.getByText(/Erreur 404/);
-			expect(message).toBeTruthy();
-		});
-		test("should fetch msg from API & fail with 500 Err msg ", async () => {
-			firebase.get.mockImplementationOnce(() =>
-				Promise.reject(new Error("Erreur 500"))
-			);
-			const html = NewBillUI({ error: "Erreur 500" });
-			document.body.innerHTML = html;
-			const message = await screen.getByText(/Erreur 500/);
-			expect(message).toBeTruthy();
 		});
 	});
 });
